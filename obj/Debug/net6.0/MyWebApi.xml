@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MyWebApi</name>
+    </assembly>
+    <members>
+        <member name="M:MyWebApi.Controllers.TestController.SeedSampleData">
+            <summary>
+            Seeds some sample random Persons.
+            </summary>
+        </member>
+        <member name="T:MyWebApi.Models.ContactInfo">
+            <summary>
+            ContactInfo class
+            </summary>
+        </member>
+        <member name="M:MyWebApi.Models.ContactInfo.#ctor(MyWebApi.Models.ContactType,System.String,System.String,System.Int32,System.String,System.String)">
+            <summary>
+            ContactInfo constructor
+            </summary>
+        </member>
+        <member name="P:MyWebApi.Models.ContactInfo.Type">
+            <summary>
+            ContactType
+            </summary>
+        </member>
+        <member name="P:MyWebApi.Models.ContactInfo.Street">
+            <summary>
+            Street
+            </summary>
+        </member>
+        <member name="P:MyWebApi.Models.ContactInfo.StreetNumber">
+            <summary>
+            StreetNumber
+            </summary>
+        </member>
+        <member name="P:MyWebApi.Models.ContactInfo.PostalCode">
+            <summary>
+            PostalCode
+            </summary>
+        </member>
+        <member name="P:MyWebApi.Models.ContactInfo.City">
+            <summary>
+            City
+            </summary>
+        </member>
+        <member name="P:MyWebApi.Models.ContactInfo.Country">
+            <summary>
+            Country
+            </summary>
+        </member>
+        <member name="T:MyWebApi.Models.Person">
+            <summary>
+            Person class
+            </summary>
+        </member>
+        <member name="P:MyWebApi.Models.Person.FirstName">
+            <summary>
+            FirstName
+            </summary>
+        </member>
+        <member name="P:MyWebApi.Models.Person.LastName">
+            <summary>
+            LastName
+            </summary>
+        </member>
+        <member name="P:MyWebApi.Models.Person.Email">
+            <summary>
+            Email
+            </summary>
+        </member>
+        <member name="P:MyWebApi.Models.Person.Mobile">
+            <summary>
+            Mobile
+            </summary>
+        </member>
+        <member name="P:MyWebApi.Models.Person.ContactInfos">
+            <summary>
+            ContactInfos
+            </summary>
+        </member>
+        <member name="T:BaseEntity">
+            <summary>
+            BaseEntity
+            </summary>
+        </member>
+        <member name="P:BaseEntity.Id">
+            <summary>
+            Primary key
+            </summary>
+        </member>
+    </members>
+</doc>
