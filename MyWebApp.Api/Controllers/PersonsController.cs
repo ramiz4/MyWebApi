@@ -25,16 +25,17 @@ namespace MyWebApp.Api.Controllers
             return _repositoryManager.PersonRepository.GetAll();
         }
 
-        //[HttpGet("{{id}}")]
+        [HttpGet("api/[controller]/{personId:guid}")]
         [EnableQuery]
-        public SingleResult<Person> GetById(Guid id)
+        public SingleResult<Person> GetById(Guid personId)
         {
             var person = _repositoryManager.PersonRepository.GetById(id);
             return SingleResult.Create(person);
         }
 
+        [HttpPutpi/[controller]/{personId:guid}")]
         [EnableQuery]
-        public IActionResult Put([FromODataUri] Guid id, [FromBody] Person person)
+        public IActionResult Put(Guid personId, [FromBody] Person person)
         {
             if (id != person.Id)
             {
@@ -60,8 +61,9 @@ namespace MyWebApp.Api.Controllers
             return Updated(person);
         }
 
+        [HttpPatch/[controller]/{personId:guid}")]
         [EnableQuery]
-        public IActionResult Patch([FromODataUri] Guid id, Delta<Person> person)
+        public IActionResult Patch(Guid personId, Delta<Person> person)
         {
             if (!ModelState.IsValid)
             {
@@ -106,8 +108,9 @@ namespace MyWebApp.Api.Controllers
             return Created(person);
         }
 
+        [HttpDelete[controller]/{personId:guid}")]
         [EnableQuery]
-        public IActionResult Delete([FromODataUri] Guid id)
+        public IActionResult Delete(Guid personId)
         {
             var existingPerson = _repositoryManager.PersonRepository.GetById(id).First();
             if (existingPerson == null)
