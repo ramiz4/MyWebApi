@@ -33,7 +33,7 @@ namespace MyWebApp.Api.Controllers
             return SingleResult.Create(person);
         }
 
-        [HttpPutpi/[controller]/{personId:guid}")]
+        [HttpPut("api/[controller]/{personId:guid}")]
         [EnableQuery]
         public IActionResult Put(Guid personId, [FromBody] Person person)
         {
@@ -61,7 +61,7 @@ namespace MyWebApp.Api.Controllers
             return Updated(person);
         }
 
-        [HttpPatch/[controller]/{personId:guid}")]
+        [HttpPatch("api/[controller]/{personId:guid}")]
         [EnableQuery]
         public IActionResult Patch(Guid personId, Delta<Person> person)
         {
@@ -108,7 +108,7 @@ namespace MyWebApp.Api.Controllers
             return Created(person);
         }
 
-        [HttpDelete[controller]/{personId:guid}")]
+        [HttpDelete("api/[controller]/{personId:guid}")]
         [EnableQuery]
         public IActionResult Delete(Guid personId)
         {
