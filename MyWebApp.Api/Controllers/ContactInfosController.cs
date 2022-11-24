@@ -1,120 +1,75 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Deltas;
-using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Query;
-using MyWebApp.Core.Entities;
-using MyWebApp.Core.Repositories;
+using MyWebApp.Core.DTOs;
+using MyWebApp.Services.Interfaces;
 
 namespace MyWebApp.Api.Controllers
 {
+    [ApiController]
+    [Route("api/Persons/{personId:guid}/ContactInfos")]
     public class ContactInfosController : ODataController
     {
-        private readonly IRepositoryManager _repositoryManager;
+        private readonly IServiceManager _serviceManager;
 
-        public ContactInfosController(IRepositoryManager repo)
+        public ContactInfosController(IServiceManager serviceManager)
         {
-            _repositoryManager = repo;
+            _serviceManager = serviceManager;
         }
 
         [EnableQuery]
-        public IQueryable<ContactInfo> Get([FromODataUri] Guid personId)
+        [HttpGet]
+        public async Task<IActionResult> GetContactInfosByPersonId(Guid personId, CancellationToken cancellationToken = default)
         {
-            return _repositoryManager.ContactInfoRepository.GetAllByPersonId(personId);
+            var contactInfosDto = await _serviceManager.ContactInfoService.GetAllByPersonIdAsync(personId, cancellationToken);
+            
+            return Ok(contactInfosDto);
         }
 
         [EnableQuery]
-        public SingleResult<ContactInfo> GetById([FromODataUri] Guid id)
+        [HttpGet("{contactInfoId:guid}")]
+        public async Task<IActionResult> GetContactInfoById(Guid personId, Guid contactInfoId, CancellationToken cancellationToken = default)
         {
-            var contactInfo = _repositoryManager.ContactInfoRepository.GetById(id); //.Where(c => c.Id == id);
-            return SingleResult.Create(contactInfo);
+            var contactInfo = await _serviceManager.ContactInfoService.GetByIdAsync(personId, contactInfoId, cancellationToken);
+            
+            return Ok(contactInfo);
         }
 
         [EnableQuery]
-        public IActionResult Put([FromODataUri] Guid id, [FromODataBody] ContactInfo contactInfo)
+        [HttpPost]
+        public async Task<IActionResult> CreateContactInfo([FromODataUri] Guid personId, [FromBody] ContactInfoForCreationDto contactInfoForCreationDto, CancellationToken cancellationToken)
         {
-            if (id != contactInfo.Id)
-            {
-                return BadRequest();
-            }
-
-            try
-            {
-                _repositoryManager.ContactInfoRepository.Update(contactInfo);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ContactInfoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        [EnableQuery]
-        public IActionResult Patch([FromODataUri] Guid id, Delta<ContactInfo> contactInfo)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var existingContactInfo = _repositoryManager.ContactInfoRepository.GetById(id).First();
-            if (existingContactInfo == null)
-            {
-                return NotFound();
-            }
-
-            contactInfo.Patch(existingContactInfo);
-            try
-            {
-                _repositoryManager.ContactInfoRepository.Update(existingContactInfo);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ContactInfoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return Updated(existingContactInfo);
-        }
-
-        [EnableQuery]
-        public IActionResult Post([FromBody] ContactInfo contactInfo)
-        {
-            _repositoryManager.ContactInfoRepository.Insert(contactInfo);
+            var contactInfo = await _serviceManager.ContactInfoService.CreateAsync(personId, contactInfoForCreationDto, cancellationToken);
             return Created(contactInfo);
         }
 
         [EnableQuery]
-        public IActionResult Delete([FromODataUri] Guid id)
-        {
-            var contactInfo = _repositoryManager.ContactInfoRepository.GetById(id).First();
-            if (contactInfo == null)
-            {
-                return NotFound();
-            }
-
-            _repositoryManager.ContactInfoRepository.Remove(contactInfo);
+        [HttpPut]
+        public async Task<IActionResult> UpdateContactInfoViaPut([FromODataUri] Guid id, [FromODataBody] ContactInfoForUpdateDto contactInfo, CancellationToken cancellationToken)
+        { 
+            await _serviceManager.ContactInfoService.UpdateViaPutAsync(id, contactInfo, cancellationToken);
+            
             return NoContent();
         }
 
-        private bool ContactInfoExists(Guid id)
+        [EnableQuery]
+        [HttpPatch]
+        public async Task<IActionResult> UpdateContactInfoViaPatch([FromODataUri] Guid id, Delta<ContactInfoForUpdateDto> contactInfo, CancellationToken cancellationToken)
         {
-            return _repositoryManager.ContactInfoRepository.GetById(id).First() != null;
+            await _serviceManager.ContactInfoService.UpdateViaPatchAsync(id, contactInfo, cancellationToken);
+
+            return NoContent();
+        }
+
+        [EnableQuery]
+        [HttpDelete("{contactInfoId:guid}")]
+        public async Task<IActionResult> DeleteContactInfo([FromODataUri] Guid personId, [FromODataUri] Guid contactInfoId, CancellationToken cancellationToken)
+        {
+            await _serviceManager.ContactInfoService.DeleteAsync(personId, contactInfoId, cancellationToken);
+            
+            return NoContent();
         }
     }
 }

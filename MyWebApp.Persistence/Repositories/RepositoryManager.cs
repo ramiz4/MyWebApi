@@ -1,4 +1,5 @@
-﻿using MyWebApp.Core.Repositories;
+﻿using AutoMapper;
+using MyWebApp.Core.Repositories;
 
 namespace MyWebApp.Persistence.Repositories
 {

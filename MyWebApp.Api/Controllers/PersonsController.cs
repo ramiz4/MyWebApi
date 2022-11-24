@@ -1,131 +1,88 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Deltas;
-using Microsoft.AspNetCore.OData.Results;
 using Microsoft.AspNetCore.OData.Query;
-using MyWebApp.Core.Entities;
-using MyWebApp.Core.Repositories;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
+using MyWebApp.Core.DTOs;
+using MyWebApp.Services.Interfaces;
+using MyWebApp.Persistence;
+using System.Threading;
 
 namespace MyWebApp.Api.Controllers
 {
     public class PersonsController : ODataController
     {
-        private readonly IRepositoryManager _repositoryManager;
-
-        public PersonsController(IRepositoryManager context)
+        private readonly IServiceManager _serviceManager;
+        private readonly AppDbContext _dbContext;
+        
+        public PersonsController(IServiceManager serviceManager, AppDbContext dbContext)
         {
-            _repositoryManager = context;
+            _serviceManager = serviceManager;
+            _dbContext = dbContext;
         }
 
         [EnableQuery]
-        public IQueryable<Person> Get()
+        [HttpGet("api/Persons/all")]
+        public IActionResult GetAllPersons()
         {
-            return _repositoryManager.PersonRepository.GetAll();
-        }
+            var persons = _serviceManager.PersonService.GetAll();
+            //var persons = _dbContext.Persons.AsQueryable();
 
-        [HttpGet("api/[controller]/{personId:guid}")]
-        [EnableQuery]
-        public SingleResult<Person> GetById(Guid personId)
-        {
-            var person = _repositoryManager.PersonRepository.GetById(id);
-            return SingleResult.Create(person);
+            return Ok(persons);
         }
 
         [HttpPut("api/[controller]/{personId:guid}")]
         [EnableQuery]
-        public IActionResult Put(Guid personId, [FromBody] Person person)
+        // Folgende zwei Attribute dürfen nicht gesetzt werden, da Swagger dann die Doku nicht mehr generieren kann. 
+        [HttpGet("api/Persons/old")]
+        //[HttpGet("api/Persons/$count")]
+        public async Task<ActionResult<IQueryable<PersonDto>>> GetPersons(CancellationToken cancellationToken)
         {
-            if (id != person.Id)
-            {
-                return BadRequest();
-            }
+            var personsDto = await _serviceManager.PersonService.GetAllAsync(cancellationToken);
 
-            try
-            {
-                _repositoryManager.PersonRepository.Update(person);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PersonExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return Updated(person);
+            return Ok(personsDto);
         }
 
         [HttpPatch("api/[controller]/{personId:guid}")]
         [EnableQuery]
-        public IActionResult Patch(Guid personId, Delta<Person> person)
+        [HttpGet("api/Persons({personId:guid})")]
+        [HttpGet("api/Persons/{personId:guid}")]
+        public async Task<IActionResult> GetPersonById(Guid personId, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var existingPerson = _repositoryManager.PersonRepository.GetById(id).First();
-            if (existingPerson == null)
-            {
-                return NotFound();
-            }
-
-            person.Patch(existingPerson);
-
-            // for testing $batch isolation scope
-            if (existingPerson.FirstName == "invalid_name") { 
-                return BadRequest();
-            }
-
-            try
-            {
-                _repositoryManager.PersonRepository.Update(existingPerson);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PersonExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return Updated(existingPerson);
+            var personDto = await _serviceManager.PersonService.GetByIdAsync(personId, cancellationToken);
+            
+            return Ok(personDto);
         }
 
-        [EnableQuery]
-        public IActionResult Post([FromBody] Person person)
+        [HttpPost("api/Persons")]
+        public async Task<IActionResult> CreatePerson([FromBody] PersonForCreationDto personForCreationDto)
         {
-            _repositoryManager.PersonRepository.Insert(person);
-            return Created(person);
+            var personDto = await _serviceManager.PersonService.CreateAsync(personForCreationDto);
+            return Ok(personDto);
         }
 
-        [HttpDelete("api/[controller]/{personId:guid}")]
-        [EnableQuery]
-        public IActionResult Delete(Guid personId)
+        [HttpPut("api/Persons/{personId:guid}")]
+        public async Task<IActionResult> UpdatePersonViaPut([FromODataUri] Guid personId, [FromBody] PersonForUpdateDto personForUpdateDto, CancellationToken cancellationToken)
         {
-            var existingPerson = _repositoryManager.PersonRepository.GetById(id).First();
-            if (existingPerson == null)
-            {
-                return NotFound();
-            }
-
-            _repositoryManager.PersonRepository.Remove(existingPerson);
+            await _serviceManager.PersonService.UpdateViaPutAsync(personId, personForUpdateDto, cancellationToken);
 
             return NoContent();
         }
 
-        private bool PersonExists(Guid id)
+        [HttpPatch("api/Persons/{personId:guid}")]
+        public async Task<IActionResult> UpdatePersonViaPatch([FromODataUri] Guid personId, [FromBody] Delta<PersonForUpdateDto> personForUpdateDtoDelta, CancellationToken cancellationToken)
         {
-            return _repositoryManager.PersonRepository.GetById(id).First() != null;
+            await _serviceManager.PersonService.UpdateViaPatchAsync(personId, personForUpdateDtoDelta, cancellationToken);
+
+            return NoContent();
+        }
+        
+        [HttpDelete("api/Persons/{personId:guid}")]
+        public async Task<IActionResult> DeletePerson([FromODataUri] Guid personId)
+        {
+            await _serviceManager.PersonService.DeleteAsync(personId);
+
+            return NoContent();
         }
     }
 }

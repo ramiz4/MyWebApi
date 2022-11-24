@@ -16,13 +16,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.OData.NewtonsoftJson" Version="8.0.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MyWebApp.Core\MyWebApp.Core.csproj" />
     <ProjectReference Include="..\MyWebApp.Persistence\MyWebApp.Persistence.csproj" />
+    <ProjectReference Include="..\MyWebApp.Services\MyWebApp.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

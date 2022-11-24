@@ -35,25 +35,28 @@ public class SeedController : ODataController
     [HttpPost("SeedSampleData")]
     public IEnumerable<Person> SeedSampleData()
     {
-        var newPersons = Enumerable.Range(1, 5).Select(index => {
+        var newPersons = Enumerable.Range(1, 5).Select(index =>
+        {
             var newPerson = new Person(
                 FirstNames[Random.Shared.Next(FirstNames.Length)],
                 LastNames[Random.Shared.Next(LastNames.Length)],
                 "lorem@impsum.com",
-                "0041 76 123 45 67"
+                "0041 76 123 45 67",
+                new List<ContactInfo>()
             );
-            newPerson.ContactInfos = new List<ContactInfo>() {
-                new ContactInfo(
-                    ContactType.Private, 
-                    "Bergstrasse", 
-                    $"{index}", 
-                    5430, 
-                    Addresses[Random.Shared.Next(Addresses.Length)], 
+            newPerson.ContactInfos = new List<ContactInfo>()
+            {
+                new(
+                    ContactType.Private,
+                    "Bergstrasse",
+                    $"{index}",
+                    5430,
+                    Addresses[Random.Shared.Next(Addresses.Length)],
                     "Schweiz",
                     newPerson.Id,
                     newPerson
                 ),
-                new ContactInfo(
+                new (
                     ContactType.Business,
                     "Bahnhofstrasse",
                     $"{index}",
@@ -65,9 +68,10 @@ public class SeedController : ODataController
                 )
             };
             _repositoryManager.PersonRepository.Insert(newPerson);
+            _repositoryManager.UnitOfWork.SaveChanges();
             return newPerson;
-        })
-        .ToArray();
+        });
+        //.ToArray();
 
         return newPersons;
     }

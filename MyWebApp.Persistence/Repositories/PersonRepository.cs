@@ -8,34 +8,39 @@ namespace MyWebApp.Persistence.Repositories
     {
         private readonly AppDbContext _dbContext;
 
-        public PersonRepository(AppDbContext dbContext) => _dbContext = dbContext;
+        public PersonRepository(AppDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         public IQueryable<Person> GetAll()
         {
-            return _dbContext.Persons;
-        } 
+            return _dbContext.Persons.AsQueryable();
+        }
 
-        public IQueryable<Person> GetById(Guid personId)
+        public async Task<IEnumerable<Person>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return _dbContext.Persons.Where(p => p.Id == personId);
+            return await _dbContext.Persons.ToListAsync(cancellationToken: cancellationToken);
+        }
+
+        public async Task<Person?> GetByIdAsync(Guid personId, CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.Persons.FirstOrDefaultAsync(p => p.Id == personId, cancellationToken);
         }
 
         public void Insert(Person person)
         {
             _dbContext.Persons.Add(person);
-            _dbContext.SaveChanges();
         }
 
         public void Remove(Person person) 
         {
             _dbContext.Persons.Remove(person);
-            _dbContext.SaveChanges();
         }
 
         public void Update(Person person)
         {
-            _dbContext.Entry(person).State = EntityState.Modified;
-            _dbContext.SaveChanges();
+            _dbContext.Update(person);
         }
     }
 }

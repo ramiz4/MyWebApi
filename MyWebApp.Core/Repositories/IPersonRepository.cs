@@ -4,9 +4,11 @@ namespace MyWebApp.Core.Repositories
 {
     public interface IPersonRepository
     {
-        IQueryable<Person> GetAll();
+        public IQueryable<Person> GetAll();
 
-        IQueryable<Person> GetById(Guid personId);
+        Task<IEnumerable<Person>> GetAllAsync(CancellationToken cancellationToken = default);
+
+        Task<Person?> GetByIdAsync(Guid personId, CancellationToken cancellationToken = default);
 
         void Insert(Person person);
 

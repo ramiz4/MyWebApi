@@ -4,9 +4,9 @@ namespace MyWebApp.Core.Repositories
 {
     public interface IContactInfoRepository
     {
-        IQueryable<ContactInfo> GetAllByPersonId(Guid personId);
+        Task<IEnumerable<ContactInfo?>> GetAllByPersonIdAsync(Guid personId, CancellationToken cancellationToken = default);
 
-        IQueryable<ContactInfo> GetById(Guid contactInfoId);
+        Task<ContactInfo?> GetByIdAsync(Guid contactInfoId, CancellationToken cancellationToken = default);
         
         void Insert(ContactInfo contactInfo);
 

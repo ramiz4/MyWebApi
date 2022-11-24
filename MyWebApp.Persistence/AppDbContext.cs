@@ -12,7 +12,7 @@ namespace MyWebApp.Persistence
         
         public virtual DbSet<Person> Persons { get; set; }
 
-        public virtual DbSet<ContactInfo> ContactInfos { get; set; }
+        public virtual DbSet<ContactInfo?> ContactInfos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MyWebApp.Core.Entities;
+﻿using MyWebApp.Core.Entities;
 using MyWebApp.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,32 +13,29 @@ namespace MyWebApp.Persistence.Repositories
             _dbContext = dbContext;
         }
 
-        public IQueryable<ContactInfo> GetAllByPersonId(Guid personId)
+        public async Task<IEnumerable<ContactInfo?>> GetAllByPersonIdAsync(Guid personId, CancellationToken cancellationToken = default)
         {
-            return _dbContext.ContactInfos.Where(x => x.PersonId == personId);
+            return await _dbContext.ContactInfos.Where(x => x.PersonId == personId).ToListAsync(cancellationToken);
         }
 
-        public IQueryable<ContactInfo> GetById(Guid contactInfoId)
+        public async Task<ContactInfo?> GetByIdAsync(Guid contactInfoId, CancellationToken cancellationToken = default)
         {
-            return _dbContext.ContactInfos.Where(x => x.Id == contactInfoId);
+            return await _dbContext.ContactInfos.FirstOrDefaultAsync(x => x.Id == contactInfoId, cancellationToken);
         }
 
         public void Insert(ContactInfo contactInfo)
         {
             _dbContext.ContactInfos.Add(contactInfo);
-            _dbContext.SaveChanges();
         }
 
         public void Remove(ContactInfo contactInfo)
         {
             _dbContext.ContactInfos.Remove(contactInfo);
-            _dbContext.SaveChanges();
         }
 
         public void Update(ContactInfo contactInfo)
         {
-            _dbContext.Entry(contactInfo).State = EntityState.Modified;
-            _dbContext.SaveChanges();
+            _dbContext.Update(contactInfo);
         }
     }
 }

@@ -8,7 +8,14 @@ namespace MyWebApp.Persistence.Repositories
 
         public UnitOfWork(AppDbContext dbContext) => _dbContext = dbContext;
 
-        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
-            _dbContext.SaveChangesAsync(cancellationToken);
+        public int SaveChanges()
+        {
+            return _dbContext.SaveChanges();
+        }
+
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            return _dbContext.SaveChangesAsync(cancellationToken);
+        }
     }
 }

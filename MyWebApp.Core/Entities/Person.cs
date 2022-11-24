@@ -1,42 +1,25 @@
 namespace MyWebApp.Core.Entities;
 
-/// <summary>
-/// Person class
-/// </summary>
-public class Person : BaseEntity
+public sealed class Person : BaseEntity
 {
     public Person() { }
 
-    public Person(string firstName, string lastName, string email, string mobile)
+    public Person(string firstName, string lastName, string email, string mobile, ICollection<ContactInfo> contactInfos)
     {
         FirstName = firstName;
         LastName = lastName;
         Email = email;
         Mobile = mobile;
+        ContactInfos = contactInfos;
     }
 
-    /// <summary>
-    /// FirstName
-    /// </summary>
     public string FirstName { get; set; }
 
-    /// <summary>
-    /// LastName
-    /// </summary>
     public string LastName { get; set; }
 
-    /// <summary>
-    /// Email
-    /// </summary>
     public string Email { get; set; }
 
-    /// <summary>
-    /// Mobile
-    /// </summary>
     public string Mobile { get; set; }
 
-    /// <summary>
-    /// ContactInfos
-    /// </summary>
-    public List<ContactInfo>? ContactInfos { get; set; }
+    public ICollection<ContactInfo> ContactInfos { get; set; }
 }
