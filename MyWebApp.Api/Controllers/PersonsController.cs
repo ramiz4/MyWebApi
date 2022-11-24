@@ -25,7 +25,6 @@ namespace MyWebApp.Api.Controllers
             return Ok(persons);
         }
 
-        [HttpPut("api/[controller]/{personId:guid}")]
         [EnableQuery]
         // Folgende zwei Attribute dürfen nicht gesetzt werden, da Swagger dann die Doku nicht mehr generieren kann. 
         [HttpGet("api/Persons/old")]
@@ -37,7 +36,6 @@ namespace MyWebApp.Api.Controllers
             return Ok(personsDto);
         }
 
-        [HttpPatch("api/[controller]/{personId:guid}")]
         [EnableQuery]
         [HttpGet("api/Persons({personId:guid})")]
         [HttpGet("api/Persons/{personId:guid}")]
