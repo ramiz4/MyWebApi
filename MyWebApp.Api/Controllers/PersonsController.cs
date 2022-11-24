@@ -8,6 +8,8 @@ using MyWebApp.Services.Interfaces;
 
 namespace MyWebApp.Api.Controllers
 {
+    [ApiController]
+    [Route("api/Persons")]
     public class PersonsController : ODataController
     {
         private readonly IServiceManager _serviceManager;
@@ -18,7 +20,7 @@ namespace MyWebApp.Api.Controllers
         }
 
         [EnableQuery]
-        [HttpGet("api/Persons/all")]
+        [HttpGet("all")]
         public IActionResult GetAllPersons()
         {
             var persons = _serviceManager.PersonService.GetAll();
@@ -27,7 +29,7 @@ namespace MyWebApp.Api.Controllers
 
         [EnableQuery]
         // Folgende zwei Attribute dürfen nicht gesetzt werden, da Swagger dann die Doku nicht mehr generieren kann. 
-        [HttpGet("api/Persons/old")]
+        [HttpGet("old")]
         //[HttpGet("api/Persons/$count")]
         public async Task<ActionResult<IQueryable<PersonDto>>> GetPersons(CancellationToken cancellationToken)
         {
@@ -37,8 +39,7 @@ namespace MyWebApp.Api.Controllers
         }
 
         [EnableQuery]
-        [HttpGet("api/Persons({personId:guid})")]
-        [HttpGet("api/Persons/{personId:guid}")]
+        [HttpGet("{personId:guid}")]
         public async Task<IActionResult> GetPersonById(Guid personId, CancellationToken cancellationToken)
         {
             var personDto = await _serviceManager.PersonService.GetByIdAsync(personId, cancellationToken);
@@ -46,28 +47,28 @@ namespace MyWebApp.Api.Controllers
             return Ok(personDto);
         }
 
-        [HttpPost("api/Persons")]
-        public async Task<IActionResult> CreatePerson([FromBody] PersonForCreationDto personForCreationDto)
+        [HttpPost]
+        public async Task<IActionResult> CreatePerson(PersonForCreationDto personForCreationDto)
         {
             var personDto = await _serviceManager.PersonService.CreateAsync(personForCreationDto);
             return Ok(personDto);
         }
 
-        [HttpPut("api/Persons/{personId:guid}")]
-        public async Task<IActionResult> UpdatePersonViaPut([FromODataUri] Guid personId, [FromBody] PersonForUpdateDto personForUpdateDto, CancellationToken cancellationToken)
+        [HttpPut("{personId:guid}")]
+        public async Task<IActionResult> UpdatePersonViaPut(Guid personId, PersonForUpdateDto personForUpdateDto, CancellationToken cancellationToken)
         {
             await _serviceManager.PersonService.UpdateViaPutAsync(personId, personForUpdateDto, cancellationToken);
             return NoContent();
         }
 
-        [HttpPatch("api/Persons/{personId:guid}")]
-        public async Task<IActionResult> UpdatePersonViaPatch([FromODataUri] Guid personId, [FromBody] Delta<PersonForUpdateDto> personForUpdateDtoDelta, CancellationToken cancellationToken)
+        [HttpPatch("{personId:guid}")]
+        public async Task<IActionResult> UpdatePersonViaPatch(Guid personId, Delta<PersonForUpdateDto> personForUpdateDtoDelta, CancellationToken cancellationToken)
         {
             await _serviceManager.PersonService.UpdateViaPatchAsync(personId, personForUpdateDtoDelta, cancellationToken);
             return NoContent();
         }
         
-        [HttpDelete("api/Persons/{personId:guid}")]
+        [HttpDelete("{personId:guid}")]
         public async Task<IActionResult> DeletePerson([FromODataUri] Guid personId)
         {
             await _serviceManager.PersonService.DeleteAsync(personId);
