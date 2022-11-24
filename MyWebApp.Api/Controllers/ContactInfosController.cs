@@ -24,7 +24,6 @@ namespace MyWebApp.Api.Controllers
         public async Task<IActionResult> GetContactInfosByPersonId(Guid personId, CancellationToken cancellationToken = default)
         {
             var contactInfosDto = await _serviceManager.ContactInfoService.GetAllByPersonIdAsync(personId, cancellationToken);
-            
             return Ok(contactInfosDto);
         }
 
@@ -33,7 +32,6 @@ namespace MyWebApp.Api.Controllers
         public async Task<IActionResult> GetContactInfoById(Guid personId, Guid contactInfoId, CancellationToken cancellationToken = default)
         {
             var contactInfo = await _serviceManager.ContactInfoService.GetByIdAsync(personId, contactInfoId, cancellationToken);
-            
             return Ok(contactInfo);
         }
 
@@ -50,7 +48,6 @@ namespace MyWebApp.Api.Controllers
         public async Task<IActionResult> UpdateContactInfoViaPut([FromODataUri] Guid id, [FromODataBody] ContactInfoForUpdateDto contactInfo, CancellationToken cancellationToken)
         { 
             await _serviceManager.ContactInfoService.UpdateViaPutAsync(id, contactInfo, cancellationToken);
-            
             return NoContent();
         }
 
@@ -59,7 +56,6 @@ namespace MyWebApp.Api.Controllers
         public async Task<IActionResult> UpdateContactInfoViaPatch([FromODataUri] Guid id, Delta<ContactInfoForUpdateDto> contactInfo, CancellationToken cancellationToken)
         {
             await _serviceManager.ContactInfoService.UpdateViaPatchAsync(id, contactInfo, cancellationToken);
-
             return NoContent();
         }
 
@@ -68,7 +64,6 @@ namespace MyWebApp.Api.Controllers
         public async Task<IActionResult> DeleteContactInfo([FromODataUri] Guid personId, [FromODataUri] Guid contactInfoId, CancellationToken cancellationToken)
         {
             await _serviceManager.ContactInfoService.DeleteAsync(personId, contactInfoId, cancellationToken);
-            
             return NoContent();
         }
     }

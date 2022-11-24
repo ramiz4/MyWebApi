@@ -1,24 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Deltas;
+using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using MyWebApp.Core.DTOs;
 using MyWebApp.Services.Interfaces;
-using MyWebApp.Persistence;
-using System.Threading;
 
 namespace MyWebApp.Api.Controllers
 {
     public class PersonsController : ODataController
     {
         private readonly IServiceManager _serviceManager;
-        private readonly AppDbContext _dbContext;
         
-        public PersonsController(IServiceManager serviceManager, AppDbContext dbContext)
+        public PersonsController(IServiceManager serviceManager)
         {
             _serviceManager = serviceManager;
-            _dbContext = dbContext;
         }
 
         [EnableQuery]
@@ -26,8 +22,6 @@ namespace MyWebApp.Api.Controllers
         public IActionResult GetAllPersons()
         {
             var persons = _serviceManager.PersonService.GetAll();
-            //var persons = _dbContext.Persons.AsQueryable();
-
             return Ok(persons);
         }
 
@@ -65,7 +59,6 @@ namespace MyWebApp.Api.Controllers
         public async Task<IActionResult> UpdatePersonViaPut([FromODataUri] Guid personId, [FromBody] PersonForUpdateDto personForUpdateDto, CancellationToken cancellationToken)
         {
             await _serviceManager.PersonService.UpdateViaPutAsync(personId, personForUpdateDto, cancellationToken);
-
             return NoContent();
         }
 
@@ -73,7 +66,6 @@ namespace MyWebApp.Api.Controllers
         public async Task<IActionResult> UpdatePersonViaPatch([FromODataUri] Guid personId, [FromBody] Delta<PersonForUpdateDto> personForUpdateDtoDelta, CancellationToken cancellationToken)
         {
             await _serviceManager.PersonService.UpdateViaPatchAsync(personId, personForUpdateDtoDelta, cancellationToken);
-
             return NoContent();
         }
         
@@ -81,7 +73,6 @@ namespace MyWebApp.Api.Controllers
         public async Task<IActionResult> DeletePerson([FromODataUri] Guid personId)
         {
             await _serviceManager.PersonService.DeleteAsync(personId);
-
             return NoContent();
         }
     }
