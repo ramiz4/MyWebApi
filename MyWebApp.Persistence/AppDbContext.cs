@@ -3,16 +3,16 @@ using MyWebApp.Core.Entities;
 
 namespace MyWebApp.Persistence
 {
-    public class AppDbContext : DbContext
+    public sealed class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) 
-            : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
+            Persons = Set<Person>();
+            ContactInfos = Set<ContactInfo>();
         }
-        
-        public virtual DbSet<Person> Persons { get; set; }
 
-        public virtual DbSet<ContactInfo?> ContactInfos { get; set; }
+        public DbSet<Person> Persons { get; set; }
+        public DbSet<ContactInfo> ContactInfos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

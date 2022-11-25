@@ -7,6 +7,7 @@ using MyWebApp.Persistence;
 using MyWebApp.Persistence.Repositories;
 using MyWebApp.Services.Interfaces;
 using MyWebApp.Services.Services;
+using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,11 +24,11 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services
     .AddControllers()
-    //.AddNewtonsoftJson(options =>
-    //{
-    //    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-    //    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-    //})
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    })
     .AddOData(opt =>
     {
         opt.Count().Filter().OrderBy().Expand().Select().SetMaxTop(10);
